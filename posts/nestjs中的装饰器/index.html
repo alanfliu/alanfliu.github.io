@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-us">
   <head>
-    <title>NestJS的基本使用 // Alanfliu Blog</title>
+    <title>登陆注册--使用用户名和密码实现身份认证及权限控制 // Alanfliu Blog</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
     <meta name="generator" content="Hugo 0.126.3">
@@ -17,27 +17,21 @@
 
     
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="NestJS的基本使用">
-  <meta name="twitter:description" content="使用Nest-cli创建项目
-nest new nest-decorator -p pnpm 装饰器大部分为函数
-1 Provider、Controller和Module Provider、Contoller和Module三个装饰器是NestJS中最基础的三个装饰器，分别对应模块、控制器和服务三个概念
-模块Module： Nest程序由一个个模块组成， 模块中包括控制器和服务
-控制器 Controller: 用来处理路由， 控制器其实就是一个类， 其中的每个方法称为Handler, 用来调用处理对应的业务逻辑， 通常将业务逻辑封装在Server中处理
-服务Servicer: 处理业务逻辑
-Nest通过Module装饰器来创建模块，通过 @Controller、@Injectable 分别声明其中的 controller 和 provider
-import { Module } from &#39;@nestjs/common&#39;; import { AppController } from &#39;./app.controller&#39;; import { AppService } from &#39;./app.service&#39;; @Module({ imports: [], controllers: [AppController], providers: [ AppService, { provide: &#39;APP_CONFIG&#39;, useValue: &#39;app config value&#39; } ], }) export class AppModule { } import { Controller, Get, Inject } from &#39;@nestjs/common&#39;; import { AppService } from &#39;.">
+  <meta name="twitter:title" content="登陆注册--使用用户名和密码实现身份认证及权限控制">
+  <meta name="twitter:description" content="基本的业务逻辑如下：
+用户输入用户名和密码 服务端接收到请求后， 将密码进行哈希处理 将哈希后的密码与数据库中的哈希进行对比 如果匹配成功， 生成一个 token 返回给客户端 1 搭建环境 1.1 前端环境搭建 使用 vite 创建一个 react 项目
+mkdir login-test cd login-test &amp;&amp; mkdir user-password-login &amp;&amp; cd user-password-login pnpm create vite 在交互过程中选择以下选项：
+Project name: clint Select a framework: React Select a variant: TypeScript 使用 tailwind css 来写样式， 需要集成 Tailwind css
+cd client pnpm add -D tailwindcss postcss autoprefixer ```bash # 这个命令会在你的项目根目录下创建 tailwind.config.js 和 postcss.config.js 文件。 ```bash npx tailwindcss init -p 修改tailwind.">
 
     <meta property="og:url" content="https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/">
   <meta property="og:site_name" content="Alanfliu Blog">
-  <meta property="og:title" content="NestJS的基本使用">
-  <meta property="og:description" content="使用Nest-cli创建项目
-nest new nest-decorator -p pnpm 装饰器大部分为函数
-1 Provider、Controller和Module Provider、Contoller和Module三个装饰器是NestJS中最基础的三个装饰器，分别对应模块、控制器和服务三个概念
-模块Module： Nest程序由一个个模块组成， 模块中包括控制器和服务
-控制器 Controller: 用来处理路由， 控制器其实就是一个类， 其中的每个方法称为Handler, 用来调用处理对应的业务逻辑， 通常将业务逻辑封装在Server中处理
-服务Servicer: 处理业务逻辑
-Nest通过Module装饰器来创建模块，通过 @Controller、@Injectable 分别声明其中的 controller 和 provider
-import { Module } from &#39;@nestjs/common&#39;; import { AppController } from &#39;./app.controller&#39;; import { AppService } from &#39;./app.service&#39;; @Module({ imports: [], controllers: [AppController], providers: [ AppService, { provide: &#39;APP_CONFIG&#39;, useValue: &#39;app config value&#39; } ], }) export class AppModule { } import { Controller, Get, Inject } from &#39;@nestjs/common&#39;; import { AppService } from &#39;.">
+  <meta property="og:title" content="登陆注册--使用用户名和密码实现身份认证及权限控制">
+  <meta property="og:description" content="基本的业务逻辑如下：
+用户输入用户名和密码 服务端接收到请求后， 将密码进行哈希处理 将哈希后的密码与数据库中的哈希进行对比 如果匹配成功， 生成一个 token 返回给客户端 1 搭建环境 1.1 前端环境搭建 使用 vite 创建一个 react 项目
+mkdir login-test cd login-test &amp;&amp; mkdir user-password-login &amp;&amp; cd user-password-login pnpm create vite 在交互过程中选择以下选项：
+Project name: clint Select a framework: React Select a variant: TypeScript 使用 tailwind css 来写样式， 需要集成 Tailwind css
+cd client pnpm add -D tailwindcss postcss autoprefixer ```bash # 这个命令会在你的项目根目录下创建 tailwind.config.js 和 postcss.config.js 文件。 ```bash npx tailwindcss init -p 修改tailwind.">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -66,7 +60,7 @@ import { Module } from &#39;@nestjs/common&#39;; import { AppController } from &
       
   <article class="post">
     <header class="post-header">
-      <h1 class ="post-title">NestJS的基本使用</h1>
+      <h1 class ="post-title">登陆注册--使用用户名和密码实现身份认证及权限控制</h1>
       <div class="post-meta">
         <div>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
@@ -80,232 +74,549 @@ import { Module } from &#39;@nestjs/common&#39;; import { AppController } from &
   <title>clock</title>
   <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
 </svg>
-          3 min read
+          7 min read
         </div>
       </div>
     </header>
     <div class="post-content">
-      <p>使用Nest-cli创建项目</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest new nest-decorator -p pnpm
-</span></span></code></pre></div><blockquote>
-<p>装饰器大部分为函数</p>
-</blockquote>
-<h2 id="1-providercontroller和module">1 Provider、Controller和Module</h2>
-<blockquote>
-<p>Provider、Contoller和Module三个装饰器是NestJS中最基础的三个装饰器，分别对应模块、控制器和服务三个概念</p>
-</blockquote>
-<blockquote>
-<p>模块Module： Nest程序由一个个模块组成， 模块中包括控制器和服务</p>
-</blockquote>
-<blockquote>
-<p>控制器 Controller: 用来处理路由， 控制器其实就是一个类， 其中的每个方法称为Handler, 用来调用处理对应的业务逻辑， 通常将业务逻辑封装在Server中处理</p>
-</blockquote>
-<blockquote>
-<p>服务Servicer: 处理业务逻辑</p>
-</blockquote>
-<p>Nest通过Module装饰器来创建模块，通过 @Controller、@Injectable 分别声明其中的 controller 和 provider</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Module</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppController</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./app.controller&#39;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./app.service&#39;</span>;
+      <p>基本的业务逻辑如下：</p>
+<ol>
+<li>用户输入用户名和密码</li>
+<li>服务端接收到请求后， 将密码进行哈希处理</li>
+<li>将哈希后的密码与数据库中的哈希进行对比</li>
+<li>如果匹配成功， 生成一个 token 返回给客户端</li>
+</ol>
+<h2 id="1-搭建环境">1 搭建环境</h2>
+<h3 id="11-前端环境搭建">1.1 前端环境搭建</h3>
+<p>使用 vite 创建一个 react 项目</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir login-test
+</span></span><span style="display:flex;"><span>cd login-test <span style="color:#f92672">&amp;&amp;</span> mkdir user-password-login <span style="color:#f92672">&amp;&amp;</span> cd user-password-login
+</span></span><span style="display:flex;"><span>pnpm create vite
+</span></span></code></pre></div><p>在交互过程中选择以下选项：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>Project name: clint
+</span></span><span style="display:flex;"><span>Select a framework: React
+</span></span><span style="display:flex;"><span>Select a variant: TypeScript
+</span></span></code></pre></div><p>使用 tailwind css 来写样式， 需要集成 Tailwind css</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd client
+</span></span><span style="display:flex;"><span>pnpm add -D tailwindcss postcss autoprefixer
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>bash
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 这个命令会在你的项目根目录下创建 tailwind.config.js 和 postcss.config.js 文件。</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>bash
+</span></span><span style="display:flex;"><span>npx tailwindcss init -p
+</span></span><span style="display:flex;"><span>修改tailwind.config.css文件
+</span></span><span style="display:flex;"><span>/** @type <span style="color:#f92672">{</span>import<span style="color:#f92672">(</span><span style="color:#e6db74">&#39;tailwindcss&#39;</span><span style="color:#f92672">)</span>.Config<span style="color:#f92672">}</span> */
+</span></span><span style="display:flex;"><span>module.exports <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  content: <span style="color:#f92672">[</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;./index.html&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;./src/**/*.{js,ts,jsx,tsx}&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">]</span>,
+</span></span><span style="display:flex;"><span>  theme: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    extend: <span style="color:#f92672">{}</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">}</span>,
+</span></span><span style="display:flex;"><span>  plugins: <span style="color:#f92672">[]</span>,
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>bash
+</span></span><span style="display:flex;"><span>删除index.css中的内容， 并添加如下代码：
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">```</span>bash
+</span></span><span style="display:flex;"><span>@tailwind base;
+</span></span><span style="display:flex;"><span>@tailwind components;
+</span></span><span style="display:flex;"><span>@tailwind utilities;
+</span></span></code></pre></div><p>另外使用 axios 来发送请求， 需要下载 axios</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pnpm add axios
+</span></span></code></pre></div><p>2 搭建后端开发环境
+使用 nest-cli 创建项目</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest new server -p pnpm
+</span></span></code></pre></div><p>下载依赖</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pnpm add typeorm @nestjs/typeorm mysql2 @nestjs/jwt
+</span></span></code></pre></div><p>配置 TypeOrm 和 Jwt 参数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Module</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">JwtModule</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/jwt&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">TypeOrmModule</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/typeorm&#34;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Module</span>({
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppController</span>],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">AppService</span>,
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;APP_CONFIG&#39;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useValue</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;app config value&#39;</span>
-</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">TypeOrmModule</span>.<span style="color:#a6e22e">forRoot</span>({
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;mysql&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">host</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;localhost&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">port</span>: <span style="color:#66d9ef">3307</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">username</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;root&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;123456&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">database</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;auth-test&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">synchronize</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">logging</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">entities</span><span style="color:#f92672">:</span> [],
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">poolSize</span>: <span style="color:#66d9ef">10</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">connectorPackage</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;mysql2&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">extra</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">authPlugin</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;sha256_password&#34;</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        }),
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">JwtModule</span>.<span style="color:#a6e22e">register</span>({
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">global</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">secret</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;alan&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">signOptions</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">expiresIn</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;7d&#34;</span>,
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        }),
 </span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [],
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [],
 </span></span><span style="display:flex;"><span>})
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppModule</span> { }
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Get</span>, <span style="color:#a6e22e">Inject</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;./app.service&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppModule</span> {}
+</span></span></code></pre></div><p>注意， 如果没有 auth-test 库， 需要创建：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">create</span> <span style="color:#66d9ef">table</span> <span style="color:#66d9ef">if</span> <span style="color:#66d9ef">not</span> <span style="color:#66d9ef">exists</span> auth<span style="color:#f92672">-</span>test;
+</span></span></code></pre></div><h2 id="2-实现基本的登陆注册需求">2 实现基本的登陆注册需求</h2>
+<h3 id="21-服务端开发-创建用户表">2.1 服务端开发-创建用户表</h3>
+<p>使用 typeorm 创建 User 表， 首先使用 nest-cli 创建一个 auth resource， 命令如下：
+res 使用 resource 的简写， 可以使用 nest g &ndash;help 来查看简写命令
+在是否需要生成 CRUD 是选择否</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest g res auth --no-spec
+</span></span></code></pre></div><p>之后 auth 文件夹下创建 entity 文件夹， 并创建 user.entity.ts 文件， 文件内容如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">PrimaryGeneratedColumn</span>, <span style="color:#a6e22e">Entity</span>, <span style="color:#a6e22e">Column</span>, <span style="color:#a6e22e">CreateDateColumn</span>, <span style="color:#a6e22e">UpdateDateColumn</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;typeorm&#34;</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Controller</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 通过属性的方式注入
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">@Inject</span>(<span style="color:#a6e22e">AppService</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Entity</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@PrimaryGeneratedColumn</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">number</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Column</span>({ <span style="color:#a6e22e">length</span>: <span style="color:#66d9ef">50</span>, <span style="color:#a6e22e">comment</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;用户名&#34;</span> })
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Column</span>({ <span style="color:#a6e22e">length</span>: <span style="color:#66d9ef">50</span>, <span style="color:#a6e22e">comment</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;密码&#34;</span> })
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">password</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@CreateDateColumn</span>({ <span style="color:#a6e22e">comment</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;创建时间&#34;</span> })
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">createTime</span>: <span style="color:#66d9ef">Date</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@UpdateDateColumn</span>({ <span style="color:#a6e22e">comment</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;更新时间&#34;</span> })
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">updateTime</span>: <span style="color:#66d9ef">Date</span>;
 </span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在 app.module.ts 中导入该 User 实体类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span> <span style="color:#a6e22e">entities</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">User</span>],
+</span></span></code></pre></div><p>此时启动项目， typeorm 会自动创建 User 表</p>
+<h3 id="22-服务端开发-注册接口">2.2 服务端开发-注册接口</h3>
+<p>在 auth.servie.ts 中实现注册逻辑</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">HttpException</span>, <span style="color:#a6e22e">Injectable</span>, <span style="color:#a6e22e">Logger</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">UserRegisterDTO</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./dto/register.dto&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">InjectRepository</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/typeorm&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">User</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./entity/user.entity&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Repository</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;typeorm&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">crypto</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;crypto&#34;</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">/// 其中注入的方式可以是构造器注入， 也可以是属性注入
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">@Controller</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 通过属性的方式注入
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">@Inject</span>(<span style="color:#a6e22e">AppService</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">generateHash</span>(<span style="color:#a6e22e">pwd</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hash</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">crypto</span>.<span style="color:#a6e22e">createHash</span>(<span style="color:#e6db74">&#34;md5&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">hash</span>.<span style="color:#a6e22e">update</span>(<span style="color:#a6e22e">pwd</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hash</span>.<span style="color:#a6e22e">digest</span>(<span style="color:#e6db74">&#34;hex&#34;</span>);
 </span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 通过构造器来注入
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">@Controller</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>) { }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>属性注入时需要写明对应的token, 注入其中的可以是class也可以是其他类型, 当token不存在时会报错， 可以使用Optional装饰器来声明为可选属性</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">@Module</span>({
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppController</span>],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">AppService</span>,
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;APP_CONFIG&#39;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useValue</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;app config value&#39;</span>
-</span></span><span style="display:flex;"><span>        },
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;SOME_OTHER_SERVICE&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useFactory() {</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Alanfliu&#39;</span>
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    ],
-</span></span><span style="display:flex;"><span>})
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// app.serice.ts
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Inject</span>, <span style="color:#a6e22e">Injectable</span>, <span style="color:#a6e22e">Optional</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;@nestjs/common&#39;</span>;
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Injectable</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppService</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Inject</span>(<span style="color:#e6db74">&#39;APP_CONFIG&#39;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appConfig</span>: <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AuthService</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@InjectRepository</span>(<span style="color:#a6e22e">User</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">userRepository</span>: <span style="color:#66d9ef">Repository</span>&lt;<span style="color:#f92672">User</span>&gt;;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Optional</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Inject</span>(<span style="color:#e6db74">&#39;SOME_OBJECT_SERVICE&#39;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">someService</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">any</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">logger</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Logger</span>();
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;Hello World!&#39;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appConfig</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">someService</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">name</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">register</span>(<span style="color:#a6e22e">userInfo</span>: <span style="color:#66d9ef">UserRegisterDTO</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">exist</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">userRepository</span>.<span style="color:#a6e22e">findOneBy</span>({ <span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">userInfo.username</span> });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">exist</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HttpException</span>(
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;用户已存在， 请重新输入用户名&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">1</span>, <span style="color:#75715e">// 用1 表示请求是否成功
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">newUser</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">User</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">newUser</span>.<span style="color:#a6e22e">username</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">userInfo</span>.<span style="color:#a6e22e">username</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">newUser</span>.<span style="color:#a6e22e">password</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">generateHash</span>(<span style="color:#a6e22e">userInfo</span>.<span style="color:#a6e22e">password</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">userRepository</span>.<span style="color:#a6e22e">save</span>(<span style="color:#a6e22e">newUser</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;注册成功&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">0</span>, <span style="color:#75715e">// 用1 表示请求是否成功
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            };
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">error</span>(<span style="color:#a6e22e">error</span>, <span style="color:#a6e22e">AuthService</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;注册失败&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">1</span>, <span style="color:#75715e">// 用1 表示请求是否成功
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            };
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>将服务提供给其他模块使用时， 需要手动声明exports</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">@Module</span>({
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppController</span>],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">AppService</span>,
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;APP_CONFIG&#39;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useValue</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;app config value&#39;</span>
-</span></span><span style="display:flex;"><span>        },
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;SOME_OTHER_SERVICE&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useFactory() {</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Alanfliu&#39;</span>
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    ],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exports</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppService</span>] <span style="color:#75715e">// 此时其他模块可以使用该服务
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>})
-</span></span></code></pre></div><p>如果模块被很多地方都引用，为了方便，可以用 @Global 把它声明为全局的，这样它 exports 的 provider 就可以直接注入了</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">@Global</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Module</span>({
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppController</span>],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [
-</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">AppService</span>,
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;APP_CONFIG&#39;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useValue</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;app config value&#39;</span>
-</span></span><span style="display:flex;"><span>        },
-</span></span><span style="display:flex;"><span>        {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">provide</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;SOME_OTHER_SERVICE&#34;</span>,
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">useFactory() {</span>
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> {
-</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#39;Alanfliu&#39;</span>
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    ],
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">exports</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppService</span>]
-</span></span><span style="display:flex;"><span>})
-</span></span></code></pre></div><h2 id="2-路由参数处理">2 路由参数处理</h2>
-<blockquote>
-<p>处理路由， 首先需要对应的请求这么处理以及怎么获取客户端传来的数据</p>
-</blockquote>
-<ol>
-<li><strong>通过@Query 参数来获取URL后的路径参数</strong>， 比如<em>http://localhost:3000/bbb?name=alanfliu&amp;gender=男</em></li>
-</ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">@Controller</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>) { }
+</span></span></code></pre></div><p>在 auth.controller.ts 中， 处理注册路由， 调用 service 的 register 方法， 返回处理结果</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Body</span>, <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Post</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AuthService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./auth.service&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">UserRegisterDTO</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./dto/register.dto&#34;</span>;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Controller</span>(<span style="color:#e6db74">&#34;auth&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AuthController</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">authService</span>: <span style="color:#66d9ef">AuthService</span>) {}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>(<span style="color:#e6db74">&#39;bbb&#39;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getBBBURLParams</span>(<span style="color:#66d9ef">@Query</span>() <span style="color:#a6e22e">params</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">any</span>&gt;) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">params</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Post</span>(<span style="color:#e6db74">&#34;register&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">register</span>(<span style="color:#66d9ef">@Body</span>() <span style="color:#a6e22e">registerInfo</span>: <span style="color:#66d9ef">UserRegisterDTO</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">authService</span>.<span style="color:#a6e22e">register</span>(<span style="color:#a6e22e">registerInfo</span>);
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>此时， Query装饰器会将路径参数解析成一个对象， 比如上述代码的例子， 会将params参数解析成下面的结果：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{<span style="color:#f92672">&#34;name&#34;</span>:<span style="color:#e6db74">&#34;alanfliu&#34;</span>,<span style="color:#f92672">&#34;gender&#34;</span>:<span style="color:#e6db74">&#34;男&#34;</span>}
-</span></span></code></pre></div><ol start="2">
-<li><strong>通过Post装饰器来解析Post请求， 通过Body装饰器来获取参数</strong></li>
-</ol>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">@Controller</span>()
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">appService</span>: <span style="color:#66d9ef">AppService</span>) { }
+</span></span></code></pre></div><p>服务端的注册逻辑也就写完了， 逻辑很简单：
+先根据 username 查找下数据库，如果找到了，说明用户已存在，抛一个 HttpException 让 exception filter 处理。
+否则，创建 User 对象，调用 userRepository 的 save 方法保存。password 需要使用哈希来处理， 用于登陆是验证密码是否正确，这里使用 node 内置的 crypto 包来实现，使用 md5 哈希算法来做处理
+在开发完接口后可以用 postman、apifox 等工具来测试下， 如下所示， 第一次调用时，返回注册成功
+第二次调用时，显示用户已注册</p>
+<h3 id="23-服务端开发--登陆接口">2.3 服务端开发&ndash;登陆接口</h3>
+<p>在 auth.servce.ts 中新建 login 方法， 判断登陆信息是否正确</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>  <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">userInfo</span>: <span style="color:#66d9ef">UserLoginDTO</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">userRepository</span>.<span style="color:#a6e22e">findOneBy</span>({ <span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">userInfo.username</span> });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">user</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HttpException</span>(
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;用户不存在，请注册&#34;</span>,
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">1</span>,
+</span></span><span style="display:flex;"><span>                },
+</span></span><span style="display:flex;"><span>                <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>        }
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">appService</span>.<span style="color:#a6e22e">getHello</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">generateHash</span>(<span style="color:#a6e22e">userInfo</span>.<span style="color:#a6e22e">password</span>) <span style="color:#f92672">===</span> <span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">password</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">user</span> : <span style="color:#66d9ef">null</span>;
 </span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>如果登陆信息正确，在 controller 中， 使用 jwt 生成 token
+需要注入 jwtSerce, 注入方式有两种， 属性注入和构造器注入， 我这里使用构造器注入</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">authService</span>: <span style="color:#66d9ef">AuthService</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">jwtService</span>: <span style="color:#66d9ef">JwtService</span>
+</span></span><span style="display:flex;"><span>    ) {}
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>(<span style="color:#e6db74">&#39;bbb&#39;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getBBBURLParams</span>(<span style="color:#66d9ef">@Query</span>() <span style="color:#a6e22e">params</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">any</span>&gt;) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">params</span>;
-</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Post</span>(<span style="color:#e6db74">&#34;login&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">login</span>(<span style="color:#66d9ef">@Body</span>() <span style="color:#a6e22e">loginInfo</span>: <span style="color:#66d9ef">UserLoginDTO</span>) {
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Post</span>(<span style="color:#e6db74">&#39;aaa&#39;</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getAAAPostData</span>(<span style="color:#66d9ef">@Body</span>() <span style="color:#a6e22e">params</span>: <span style="color:#66d9ef">Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">any</span>&gt;) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">user</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">authService</span>.<span style="color:#a6e22e">login</span>(<span style="color:#a6e22e">loginInfo</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">user</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;登陆失败， 密码不正确&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">1</span>,
+</span></span><span style="display:flex;"><span>            };
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">jwtService</span>.<span style="color:#a6e22e">sign</span>({
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">user.username</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">createTime</span>: <span style="color:#66d9ef">user.createTime</span>,
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">flag</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;这是服务端数据&#34;</span>,
-</span></span><span style="display:flex;"><span>            ...<span style="color:#a6e22e">params</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;登陆成功&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">token</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">status</span>: <span style="color:#66d9ef">0</span>,
 </span></span><span style="display:flex;"><span>        };
 </span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><h3 id="24-前端开发-axios-配置">2.4 前端开发-axios 配置</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">axios</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;axios&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">axiosInstance</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">axios</span>.<span style="color:#a6e22e">create</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">baseURL</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;http://localhost:3000&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">timeout</span>: <span style="color:#66d9ef">10000</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;Content-Type&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;application/json&#34;</span>,
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">axiosInstance</span>.<span style="color:#a6e22e">interceptors</span>.<span style="color:#a6e22e">request</span>.<span style="color:#a6e22e">use</span>(
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">config</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">localStorage</span>.<span style="color:#a6e22e">getItem</span>(<span style="color:#e6db74">&#34;token&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">token</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">config</span>.<span style="color:#a6e22e">headers</span>.<span style="color:#a6e22e">Authorization</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`Bearer </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">config</span>;
+</span></span><span style="display:flex;"><span>    },
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">err</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Promise</span>.<span style="color:#a6e22e">reject</span>(<span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">axiosInstance</span>.<span style="color:#a6e22e">interceptors</span>.<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">use</span>(
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">response</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">err</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">response</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 请求已发出，服务器响应了状态码，但状态码超出了 2xx 范围
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Response Error:&#34;</span>, <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">response</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">request</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 请求已发出，但没有收到响应
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Request Error:&#34;</span>, <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">request</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Error:&#34;</span>, <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">message</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">Promise</span>.<span style="color:#a6e22e">reject</span>(<span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">axiosInstance</span>;
+</span></span></code></pre></div><p>2.5 登陆注册页面开发
+使用 Antd 组件库的 Form 表单来开发登陆注册</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">React</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;react&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> { <span style="color:#a6e22e">FormProps</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Button</span>, <span style="color:#a6e22e">Form</span>, <span style="color:#a6e22e">Input</span>, <span style="color:#a6e22e">message</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">login</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;../../api/auth&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserLoginType</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">username?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">password?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onFinish</span>: <span style="color:#66d9ef">FormProps</span>&lt;<span style="color:#f92672">UserLoginType</span>&gt;[<span style="color:#e6db74">&#34;onFinish&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">values</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">username</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#a6e22e">password</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">values</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">login</span>({ <span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">success</span>(<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">statusText</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">localStorage</span>.<span style="color:#a6e22e">setItem</span>(<span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">error</span>(<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">statusText</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onFinishFailed</span>: <span style="color:#66d9ef">FormProps</span>&lt;<span style="color:#f92672">UserLoginType</span>&gt;[<span style="color:#e6db74">&#34;onFinishFailed&#34;</span>] <span style="color:#f92672">=</span> (<span style="color:#a6e22e">errorInfo</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Failed:&#34;</span>, <span style="color:#a6e22e">errorInfo</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Login</span>: <span style="color:#66d9ef">React.FC</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> (
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">Form</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;basic&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">layout</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vertical&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{ <span style="color:#a6e22e">maxWidth</span>: <span style="color:#66d9ef">600</span> }}
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">initialValues</span><span style="color:#f92672">=</span>{{ <span style="color:#a6e22e">remember</span>: <span style="color:#66d9ef">true</span> }}
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">onFinish</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onFinish</span>}
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">onFinishFailed</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onFinishFailed</span>}
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">autoComplete</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;off&#34;</span>
+</span></span><span style="display:flex;"><span>    &gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">Form.Item</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">UserLoginType</span>&gt;
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;用户&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">rules</span><span style="color:#f92672">=</span>{[{ <span style="color:#a6e22e">required</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Please input your username!&#34;</span> }]}
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Input</span> /&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">Form.Item</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">UserLoginType</span>&gt;
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;密码&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">rules</span><span style="color:#f92672">=</span>{[{ <span style="color:#a6e22e">required</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Please input your password!&#34;</span> }]}
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Input.Password</span> /&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Button</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;primary&#34;</span> <span style="color:#a6e22e">htmlType</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;w-full&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                <span style="color:#960050;background-color:#1e0010">提交</span>
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Button</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">Form</span>&gt;
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">Login</span>;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">React</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;react&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#66d9ef">type</span> { <span style="color:#a6e22e">FormProps</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Button</span>, <span style="color:#a6e22e">Form</span>, <span style="color:#a6e22e">Input</span>, <span style="color:#a6e22e">message</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">register</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;../../api/auth&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UserRegisterType</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">username?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">password?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">confirmPassword?</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Register</span>: <span style="color:#66d9ef">React.FC</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onFinish</span>: <span style="color:#66d9ef">FormProps</span>&lt;<span style="color:#f92672">UserRegisterType</span>&gt;[<span style="color:#e6db74">&#34;onFinish&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">values</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">username</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#a6e22e">password</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">values</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">register</span>({ <span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span> });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">success</span>(<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">statusText</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">localStorage</span>.<span style="color:#a6e22e">setItem</span>(<span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">error</span>(<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">statusText</span>);
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onFinishFailed</span>: <span style="color:#66d9ef">FormProps</span>&lt;<span style="color:#f92672">UserRegisterType</span>&gt;[<span style="color:#e6db74">&#34;onFinishFailed&#34;</span>] <span style="color:#f92672">=</span> (<span style="color:#a6e22e">errorInfo</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Failed:&#34;</span>, <span style="color:#a6e22e">errorInfo</span>);
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">Form</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;basic&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">layout</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vertical&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{ <span style="color:#a6e22e">maxWidth</span>: <span style="color:#66d9ef">600</span> }}
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">initialValues</span><span style="color:#f92672">=</span>{{ <span style="color:#a6e22e">remember</span>: <span style="color:#66d9ef">true</span> }}
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">onFinish</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onFinish</span>}
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">onFinishFailed</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">onFinishFailed</span>}
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">autoComplete</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;off&#34;</span>
+</span></span><span style="display:flex;"><span>        &gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Form.Item</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">UserRegisterType</span>&gt;
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;用户&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;username&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">rules</span><span style="color:#f92672">=</span>{[{ <span style="color:#a6e22e">required</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Please input your username!&#34;</span> }]}
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">Input</span> /&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Form.Item</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">UserRegisterType</span>&gt;
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;密码&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">rules</span><span style="color:#f92672">=</span>{[{ <span style="color:#a6e22e">required</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Please input your password!&#34;</span> }]}
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">Input.Password</span> /&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Form.Item</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">UserRegisterType</span>&gt;
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">label</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;确认密码&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;confirmPassword&#34;</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">rules</span><span style="color:#f92672">=</span>{[{ <span style="color:#a6e22e">required</span>: <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Please input your confirm password!&#34;</span> }]}
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">Input.Password</span> /&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">Button</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;primary&#34;</span> <span style="color:#a6e22e">htmlType</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;w-full&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                    <span style="color:#960050;background-color:#1e0010">注册</span>
+</span></span><span style="display:flex;"><span>                &lt;/<span style="color:#f92672">Button</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Form.Item</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">Form</span>&gt;
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">Register</span>;
+</span></span></code></pre></div><p>在 Auth/index.ts 中使用 state 来控制登陆/注册切换</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">useState</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;react&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Button</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Login</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./login&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Register</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./register&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Authorization</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">isLogin</span>, <span style="color:#a6e22e">setIslogin</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tip</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">isLogin</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;没有用户？ 注册一个吧~~&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;已有用户？直接登陆&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;min-h-screen flex flex-col items-center justify-center bg-gray-100&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">h3</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text-2xl font-bold mb-6 text-center&#34;</span>&gt;{<span style="color:#a6e22e">isLogin</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;登陆&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;注册&#34;</span>}&lt;/<span style="color:#f92672">h3</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;w-full max-w-md&#34;</span>&gt;{<span style="color:#a6e22e">isLogin</span> <span style="color:#f92672">?</span> &lt;<span style="color:#f92672">Login</span> /&gt; <span style="color:#f92672">:</span> &lt;<span style="color:#f92672">Register</span> /&gt;}&lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Button</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;link&#34;</span> <span style="color:#a6e22e">htmlType</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;w-full&#34;</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{() <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">setIslogin</span>((<span style="color:#a6e22e">item</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">item</span>)}&gt;
+</span></span><span style="display:flex;"><span>                {<span style="color:#a6e22e">tip</span>}
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Button</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">Authorization</span>;
+</span></span></code></pre></div><h3 id="26-使用-context-进行身份认证">2.6 使用 Context 进行身份认证</h3>
+<p>一般会将这种用户信息存入 Redux 中进行保存， 这里使用 Context 来进行模拟操作
+首先在 useAuth.tsx 中集中管理身份认证信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ReactNode</span>, <span style="color:#a6e22e">createContext</span>, <span style="color:#a6e22e">useContext</span>, <span style="color:#a6e22e">useState</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;react&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">login</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;../api/auth&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">User</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">token</span>: <span style="color:#66d9ef">string</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>当发送JSON数据为: {&ldquo;name&rdquo;: &ldquo;alanfliu&rdquo;, &ldquo;school&rdquo;: &ldquo;CQUPT&rdquo;}时， 会返回如下结果</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;flag&#34;</span>: <span style="color:#e6db74">&#34;这是服务端数据&#34;</span>,
-</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;JSON&#34;</span>,
-</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&#34;school&#34;</span>: <span style="color:#e6db74">&#34;CQUPT&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AuthContextType</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">user</span>: <span style="color:#66d9ef">User</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">onLogin</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">password</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">Promise</span>&lt;<span style="color:#f92672">any</span>&gt;;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logout</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>除了 @Get、@Post 外，还可以用 @Put、@Delete、@Patch、@Options、@Head 装饰器分别接受 put、delete、patch、options、head 请求</p>
-<h2 id="3-路由守卫拦截器和管道">3 路由守卫、拦截器和管道</h2>
-<h2 id="4-总结">4 总结</h2>
-<ul>
-<li>@Module： 声明 Nest 模块</li>
-<li>@Controller：声明模块里的 controller</li>
-<li>@Injectable：声明模块里可以注入的 provider</li>
-<li>@Inject：通过 token 手动指定注入的 provider，token 可以是 class 或者 string</li>
-<li>@Optional：声明注入的 provider 是可选的，可以为空</li>
-<li>@Global：声明全局模块</li>
-<li>@Param：取出 url 中的参数，比如 /aaa/:id 中的 id</li>
-<li>@Query: 取出 query 部分的参数，比如 /aaa?name=xx 中的 name</li>
-<li>@Body：取出请求 body，通过 dto class 来接收</li>
-</ul>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AuthProviderProps</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">children</span>: <span style="color:#66d9ef">ReactNode</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">AuthContext</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createContext</span>&lt;<span style="color:#f92672">AuthContextType</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">undefined</span>&gt;(<span style="color:#66d9ef">undefined</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">AuthProvider</span>: <span style="color:#66d9ef">React.FC</span>&lt;<span style="color:#f92672">AuthProviderProps</span>&gt; <span style="color:#f92672">=</span> (<span style="color:#a6e22e">props</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">children</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">props</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">user</span>, <span style="color:#a6e22e">setUser</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">User</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">null</span>&gt;(<span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onLogin</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">username</span>: <span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">password</span>: <span style="color:#66d9ef">string</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">login</span>({ <span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span> });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">status</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">localStorage</span>.<span style="color:#a6e22e">setItem</span>(<span style="color:#e6db74">&#34;token&#34;</span>, <span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">data</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">setUser</span>({ <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">username</span>, <span style="color:#a6e22e">token</span>: <span style="color:#66d9ef">response.data?.token</span> });
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">logout</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">setUser</span>(<span style="color:#66d9ef">null</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">localStorage</span>.<span style="color:#a6e22e">removeItem</span>(<span style="color:#e6db74">&#34;token&#34;</span>);
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">AuthContext.Provider</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">value</span><span style="color:#f92672">=</span>{{
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">user</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">onLogin</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">logout</span>,
+</span></span><span style="display:flex;"><span>            }}
+</span></span><span style="display:flex;"><span>        &gt;
+</span></span><span style="display:flex;"><span>            {<span style="color:#a6e22e">children</span>}
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">AuthContext.Provider</span>&gt;
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">useAuth</span> <span style="color:#f92672">=</span> ()<span style="color:#f92672">:</span> <span style="color:#a6e22e">AuthContextType</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">context</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useContext</span>(<span style="color:#a6e22e">AuthContext</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">context</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">&#34;useAuth must be used an AuthProvider&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">context</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>在 App.tsx 中， 进行判断：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">useAuth</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./hooks/useAuth&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Login</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./pages/Auth&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> <span style="color:#a6e22e">Entry</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./pages/entry&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">App() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">user</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">useAuth</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">user</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">name</span> <span style="color:#f92672">?</span> &lt;<span style="color:#f92672">Entry</span> /&gt; <span style="color:#f92672">:</span> &lt;<span style="color:#f92672">Login</span> /&gt;;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">App</span>;
+</span></span></code></pre></div><p>在登陆和主页面时调用登陆和退出方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Login</span>: <span style="color:#66d9ef">React.FC</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">onLogin</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">useAuth</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">onFinish</span>: <span style="color:#66d9ef">FormProps</span>&lt;<span style="color:#f92672">UserLoginType</span>&gt;[<span style="color:#e6db74">&#34;onFinish&#34;</span>] <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">values</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">username</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#a6e22e">password</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">values</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">onLogin</span>(<span style="color:#a6e22e">username</span>, <span style="color:#a6e22e">password</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">response</span><span style="color:#f92672">?</span>.<span style="color:#a6e22e">status</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">success</span>(<span style="color:#e6db74">&#34;登陆成功&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">message</span>.<span style="color:#a6e22e">error</span>(<span style="color:#a6e22e">response</span>.<span style="color:#a6e22e">statusText</span>);
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>在退出时，调用 logout 方法， 删除 token 以及重置 User 信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Button</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;antd&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">useAuth</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;../../hooks/useAuth&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">Entry</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">logout</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">useAuth</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">div</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;w-screen h-screen flex flex-col items-center justify-center&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">h1</span> <span style="color:#a6e22e">className</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;mb-4 from-teal-600&#34;</span>&gt;<span style="color:#66d9ef">this</span> <span style="color:#66d9ef">is</span> <span style="color:#a6e22e">entry</span> <span style="color:#a6e22e">page</span>&lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">Button</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;primary&#34;</span> <span style="color:#a6e22e">onClick</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">logout</span>}&gt;
+</span></span><span style="display:flex;"><span>                <span style="color:#960050;background-color:#1e0010">退出登陆</span>
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">Button</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">div</span>&gt;
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">default</span> <span style="color:#a6e22e">Entry</span>;
+</span></span></code></pre></div><h2 id="3-完善登陆注册模块-rbac-权限控制">3 完善登陆注册模块-RBAC 权限控制</h2>
+<h2 id="4-提高用户体验-无感刷新登陆状态">4 提高用户体验-无感刷新登陆状态</h2>
+<h2 id="5-总结">5 总结</h2>
 
     </div>
     <div class="post-footer">

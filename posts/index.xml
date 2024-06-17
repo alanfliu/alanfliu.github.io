@@ -9,11 +9,11 @@
     <lastBuildDate>Thu, 06 Jun 2024 23:23:35 +0800</lastBuildDate>
     <atom:link href="https://alanfliu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>NestJS的基本使用</title>
+      <title>登陆注册--使用用户名和密码实现身份认证及权限控制</title>
       <link>https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
       <pubDate>Thu, 06 Jun 2024 23:23:35 +0800</pubDate>
       <guid>https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
-      <description>使用Nest-cli创建项目&#xA;nest new nest-decorator -p pnpm 装饰器大部分为函数&#xA;1 Provider、Controller和Module Provider、Contoller和Module三个装饰器是NestJS中最基础的三个装饰器，分别对应模块、控制器和服务三个概念&#xA;模块Module： Nest程序由一个个模块组成， 模块中包括控制器和服务&#xA;控制器 Controller: 用来处理路由， 控制器其实就是一个类， 其中的每个方法称为Handler, 用来调用处理对应的业务逻辑， 通常将业务逻辑封装在Server中处理&#xA;服务Servicer: 处理业务逻辑&#xA;Nest通过Module装饰器来创建模块，通过 @Controller、@Injectable 分别声明其中的 controller 和 provider&#xA;import { Module } from &amp;#39;@nestjs/common&amp;#39;; import { AppController } from &amp;#39;./app.controller&amp;#39;; import { AppService } from &amp;#39;./app.service&amp;#39;; @Module({ imports: [], controllers: [AppController], providers: [ AppService, { provide: &amp;#39;APP_CONFIG&amp;#39;, useValue: &amp;#39;app config value&amp;#39; } ], }) export class AppModule { } import { Controller, Get, Inject } from &amp;#39;@nestjs/common&amp;#39;; import { AppService } from &amp;#39;.</description>
+      <description>基本的业务逻辑如下：&#xA;用户输入用户名和密码 服务端接收到请求后， 将密码进行哈希处理 将哈希后的密码与数据库中的哈希进行对比 如果匹配成功， 生成一个 token 返回给客户端 1 搭建环境 1.1 前端环境搭建 使用 vite 创建一个 react 项目&#xA;mkdir login-test cd login-test &amp;amp;&amp;amp; mkdir user-password-login &amp;amp;&amp;amp; cd user-password-login pnpm create vite 在交互过程中选择以下选项：&#xA;Project name: clint Select a framework: React Select a variant: TypeScript 使用 tailwind css 来写样式， 需要集成 Tailwind css&#xA;cd client pnpm add -D tailwindcss postcss autoprefixer ```bash # 这个命令会在你的项目根目录下创建 tailwind.config.js 和 postcss.config.js 文件。 ```bash npx tailwindcss init -p 修改tailwind.</description>
     </item>
   </channel>
 </rss>
