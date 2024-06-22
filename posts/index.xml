@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Alanfliu Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 06 Jun 2024 23:23:35 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 22 Jun 2024 14:14:35 +0800</lastBuildDate>
     <atom:link href="https://alanfliu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Typescript-类型工具与泛型</title>
+      <link>https://alanfliu.github.io/posts/ts%E5%AD%A6%E4%B9%A0-%E6%B3%9B%E5%9E%8B/</link>
+      <pubDate>Sat, 22 Jun 2024 14:14:35 +0800</pubDate>
+      <guid>https://alanfliu.github.io/posts/ts%E5%AD%A6%E4%B9%A0-%E6%B3%9B%E5%9E%8B/</guid>
+      <description>前言 最近在重新学习 Typescript, 从类型工具与泛型开始梳理起， 毕竟泛型是 TS 的灵魂之一， 而泛型是离不开类型工具的； 这篇博客从以下三点开启梳理：&#xA;类型工具 泛型 常见工具函数的模拟实现 1 类型工具 类型工具顾名思义，它就是对类型进行处理的工具。按照使用目的来划分，类型工具可以分为 类型创建 与 类型安全保护 两类。&#xA;类型工具：负责创建类型 类型安全保护：负责守卫类型 1.1 类型工具 联合类型很简单， 看下面的代码：&#xA;interface NameStruct { name: string; } interface AgeStruct { age: number; } type NameOrAge = NameStruct | AgeStruct; const p: NameOrAge = { name: &amp;#34;12&amp;#34;, age: 12, }; const p2: NameOrAge = { name: &amp;#34;12&amp;#34;, }; const p3: NameOrAge = { age: 12, }; 如何两个类型 A 和 B 组成一个联合类型 C, 那么 C 就需要符合要么是 A，要么是 B， 要么是 AB</description>
+    </item>
     <item>
       <title>登陆注册--使用用户名和密码实现身份认证及权限控制</title>
       <link>https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/</link>

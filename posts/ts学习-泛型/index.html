@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>Typescript-类型工具与泛型 // Alanfliu Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.126.3">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Alanfliu" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+  
+
+
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Typescript-类型工具与泛型">
+  <meta name="twitter:description" content="前言 最近在重新学习 Typescript, 从类型工具与泛型开始梳理起， 毕竟泛型是 TS 的灵魂之一， 而泛型是离不开类型工具的； 这篇博客从以下三点开启梳理：
+类型工具 泛型 常见工具函数的模拟实现 1 类型工具 类型工具顾名思义，它就是对类型进行处理的工具。按照使用目的来划分，类型工具可以分为 类型创建 与 类型安全保护 两类。
+类型工具：负责创建类型 类型安全保护：负责守卫类型 1.1 类型工具 联合类型很简单， 看下面的代码：
+interface NameStruct { name: string; } interface AgeStruct { age: number; } type NameOrAge = NameStruct | AgeStruct; const p: NameOrAge = { name: &#34;12&#34;, age: 12, }; const p2: NameOrAge = { name: &#34;12&#34;, }; const p3: NameOrAge = { age: 12, }; 如何两个类型 A 和 B 组成一个联合类型 C, 那么 C 就需要符合要么是 A，要么是 B， 要么是 AB">
+
+    <meta property="og:url" content="https://alanfliu.github.io/posts/ts%E5%AD%A6%E4%B9%A0-%E6%B3%9B%E5%9E%8B/">
+  <meta property="og:site_name" content="Alanfliu Blog">
+  <meta property="og:title" content="Typescript-类型工具与泛型">
+  <meta property="og:description" content="前言 最近在重新学习 Typescript, 从类型工具与泛型开始梳理起， 毕竟泛型是 TS 的灵魂之一， 而泛型是离不开类型工具的； 这篇博客从以下三点开启梳理：
+类型工具 泛型 常见工具函数的模拟实现 1 类型工具 类型工具顾名思义，它就是对类型进行处理的工具。按照使用目的来划分，类型工具可以分为 类型创建 与 类型安全保护 两类。
+类型工具：负责创建类型 类型安全保护：负责守卫类型 1.1 类型工具 联合类型很简单， 看下面的代码：
+interface NameStruct { name: string; } interface AgeStruct { age: number; } type NameOrAge = NameStruct | AgeStruct; const p: NameOrAge = { name: &#34;12&#34;, age: 12, }; const p2: NameOrAge = { name: &#34;12&#34;, }; const p3: NameOrAge = { age: 12, }; 如何两个类型 A 和 B 组成一个联合类型 C, 那么 C 就需要符合要么是 A，要么是 B， 要么是 AB">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-06-22T14:14:35+08:00">
+    <meta property="article:modified_time" content="2024-06-22T14:14:35+08:00">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://alanfliu.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Alanfliu" /></a>
+      <span class="app-header-title">Alanfliu Blog</span>
+      <p>前端程序员，努力探索世界中~~</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/alanfliu" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">Typescript-类型工具与泛型</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 22, 2024
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          5 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<blockquote>
+<p>最近在重新学习 Typescript, 从类型工具与泛型开始梳理起， 毕竟泛型是 TS 的灵魂之一， 而泛型是离不开类型工具的； 这篇博客从以下三点开启梳理：</p>
+</blockquote>
+<ol>
+<li>类型工具</li>
+<li>泛型</li>
+<li>常见工具函数的模拟实现</li>
+</ol>
+<h2 id="1-类型工具">1 类型工具</h2>
+<p>类型工具顾名思义，它就是对类型进行处理的工具。按照使用目的来划分，类型工具可以分为 类型创建 与 类型安全保护 两类。</p>
+<ol>
+<li>类型工具：负责创建类型</li>
+<li>类型安全保护：负责守卫类型</li>
+</ol>
+<h3 id="11-类型工具">1.1 类型工具</h3>
+<p>联合类型很简单， 看下面的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">NameStruct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AgeStruct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NameOrAge</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">NameStruct</span> <span style="color:#f92672">|</span> <span style="color:#a6e22e">AgeStruct</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p</span>: <span style="color:#66d9ef">NameOrAge</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;12&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">12</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p2</span>: <span style="color:#66d9ef">NameOrAge</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;12&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p3</span>: <span style="color:#66d9ef">NameOrAge</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">12</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>如何两个类型 A 和 B 组成一个联合类型 C, 那么 C 就需要符合要么是 A，要么是 B， 要么是 AB</p>
+<p><strong>交叉工具比较麻烦</strong>， 很多时候会得到 Bottom Type： never 类型。看下面的代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">StringTypeStruct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">AgeTypeStruct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ProfileType</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">StringTypeStruct</span> <span style="color:#f92672">&amp;</span> <span style="color:#a6e22e">AgeTypeStruct</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">p</span>: <span style="color:#66d9ef">ProfileType</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">12</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Alan&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>两个类型 A 和 B 组成一个较差类型 C， 那么 C 就必须即符合 A 也符合 B， 比如上面的 ProfileType 类型， 必须有 name 和 age 两个属性</p>
+<p>如何 A 和 B 八字犯冲， 命中注定不能在一起， 那么很遗憾， 只能是 never 类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NeverType</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">number</span>;
+</span></span></code></pre></div><p>如何两个类型中有同名的属性， 那么就会进行同名属性类型合并，比如下面的示例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Struct1</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">primitiveProp</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">objectProp</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Struct2</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">primitiveProp</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">objectProp</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Composed</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Struct1</span> <span style="color:#f92672">&amp;</span> <span style="color:#a6e22e">Struct2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">PrimitivePropType</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Composed</span>[<span style="color:#e6db74">&#34;primitiveProp&#34;</span>]; <span style="color:#75715e">// never
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ObjectPropType</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Composed</span>[<span style="color:#e6db74">&#34;objectProp&#34;</span>]; <span style="color:#75715e">// { name: string; age: number; }
+</span></span></span></code></pre></div><p>如果两个联合类型组成交叉类型， 那么得到的就是两个联合类型的交集：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnionIntersection1</span> <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">2</span>); <span style="color:#75715e">// 1 | 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnionIntersection2</span> <span style="color:#f92672">=</span> (<span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">symbol</span>) <span style="color:#f92672">&amp;</span> <span style="color:#66d9ef">string</span>; <span style="color:#75715e">// string
+</span></span></span></code></pre></div><h3 id="12-索引类型">1.2 索引类型</h3>
+<p>首先就是索引签名， 比如声明一个键值类型一致的类型结构：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">AllStringTypes</span> <span style="color:#f92672">=</span> { [<span style="color:#a6e22e">key</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> };
+</span></span></code></pre></div><p>其次其次就是索引查询， 比如下面的接口:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Person</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">email</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">createTime</span>: <span style="color:#66d9ef">Date</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>如何得到 Person.name 的类型呢？ 答案是直接按键名获取就行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">NameType</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Person</span>[<span style="color:#e6db74">&#34;name&#34;</span>]; <span style="color:#75715e">// string
+</span></span></span></code></pre></div><p>那么如果我想获取 Person 接口的所有键名呢？那就需要用到 keyof 关键字了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnionPersonType</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">Person</span>; <span style="color:#75715e">// name | age | email | create
+</span></span></span></code></pre></div><p>keyof 关键字就是遍历一个接口或者类型， 得到一个由键名组成的联合类型</p>
+<p>最后一步， 如果我能遍历这个<em>由键名组成的联合类型</em>， 接口类型查询， 是不是就能够改写这个原始类型呢？ 还真能， 那就是 in 关键字：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ClonePersonType</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">Person</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">Person</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>在上述代码中， 我们通过索引签名，快速声明一个由键值组成的类型结构； 之后通过 <strong>keyof</strong> 关键字取出 Person 的所有键名， 通过<strong>in</strong>关键字遍历读取每一个键名， 之后通过索引查询， 取出对应的类型，比如 <strong>Person[&ldquo;name&rdquo;]</strong>, 这样就得到了一个跟 <strong>Person</strong> 一模一样的类型了！！</p>
+<p>用 JS 语言来描述， 会更加直观：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">// 索引申明,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">clonePerson</span> <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// keyof person
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">keyofPerson</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">keys</span>(<span style="color:#a6e22e">Person</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// in
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">keyofPerson</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">key</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 索引访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Person</span>[<span style="color:#a6e22e">key</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 复制
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">clonePerson</span>[<span style="color:#a6e22e">key</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span>;
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>把上面的代码封装成一个函数， 就可以得到一个可复用的函数； 在类型编程，也就是 TS 中， 声明一个遍历也就是封装函数的过程：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#75715e">// js
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getClonePerson</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">clonePerson</span> <span style="color:#f92672">=</span> {};
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// keyof person
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">keyofPerson</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">keys</span>(<span style="color:#a6e22e">Person</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// in
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">keyofPerson</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">key</span>) =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 索引访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">value</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Person</span>[<span style="color:#a6e22e">key</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 复制
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#a6e22e">clonePerson</span>[<span style="color:#a6e22e">key</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">value</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ts
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">type</span> <span style="color:#a6e22e">ClonePersonType</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">Person</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">Person</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="2-泛型">2 泛型</h2>
+<h3 id="21-泛型介绍">2.1 泛型介绍</h3>
+<p><strong>getClonePerson 函数</strong>是没有参数的，内部使用了全局变量 Person, 也就是说这个函数只能处理 Person 这一个值了， 对于其他的相同结构的值不能实现拷贝， 这显然是不合理的。</p>
+<p>回到 TS 中， ClonePersonType 类型同样是只能 clone Person 类型， 对于其他的类型不能进行 Clone, 那么在类型变量中， 有没有一个东西能充当变量的作用呢？ 答案就是<strong>泛型</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Union</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">T</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnionDate</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Union</span>&lt;<span style="color:#f92672">Date</span>&gt;; <span style="color:#75715e">//  string | number | Date
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Clone</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Person</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Profile</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">url</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">phone</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_ClonePerson</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_Clone</span>&lt;<span style="color:#f92672">Person</span>&gt;;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_CloneProfile</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_Clone</span>&lt;<span style="color:#f92672">Profile</span>&gt;;
+</span></span></code></pre></div><p>有了这个基础， 就可以手写 Partial 和 Required 两种内置工具类型了</p>
+<ul>
+<li>Partial: 将所有属性变为可选</li>
+<li>Required: 将所有属性变为必选</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Partial</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">?:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_PartialPerson</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_Partial</span>&lt;<span style="color:#f92672">Person</span>&gt;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Required</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">-?:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_RequiredPerson</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_Required</span>&lt;<span style="color:#f92672">Partial</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">Person</span>&gt;<span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><h3 id="22-extends-关键字">2.2 extends 关键字</h3>
+<p>光有泛型是远远不够的， 试想一下， 在用 JS 编程中， 写一个公共函数， 必须要对参数进行类型判断， 类型不对时， 需要抛出错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">fatten</span>(<span style="color:#a6e22e">array</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Array.<span style="color:#a6e22e">isArray</span>(<span style="color:#a6e22e">array</span>)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TypeErr</span>(<span style="color:#e6db74">&#34;param must be a Array&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// some logic
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span></code></pre></div><p>在 TS 中， 同样需要对一个类型进行约束（要求传入这个工具类型的泛型必须符合某些条件）， 使用 extends 关键字进行，<strong>A extends B</strong> 意味着 <strong>A 是 B 的子类型</strong>， 比如：</p>
+<ul>
+<li>字面量类型是对应原始类型的子类型，即 &rsquo;linbudu&rsquo; extends string，599 extends number 成立</li>
+<li>联合类型子集均为联合类型的子类型，即 1、 1 | 2 是 1 | 2 | 3 | 4 的子类型。</li>
+<li>基类与派生类（父类与子类）同理， 如 { name: string } 是 {} 的子类型，因为在 {} 的基础上增加了额外的类型</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ResStatus</span>&lt;<span style="color:#f92672">ResCode</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">number</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">ResCode</span> <span style="color:#66d9ef">extends</span> <span style="color:#ae81ff">10000</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">10001</span> <span style="color:#f92672">|</span> <span style="color:#ae81ff">10002</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;success&#34;</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;failure&#34;</span>;
+</span></span></code></pre></div><h3 id="23-默认值">2.3 默认值</h3>
+<p>泛型可以接受一个默认值， 当没传泛型时， 就会使用默认值</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">UnionBooleanType</span>&lt;<span style="color:#f92672">T</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#a6e22e">boolean</span>&gt; <span style="color:#f92672">=</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">boolean</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">MyType</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">UnionBooleanType</span>; <span style="color:#75715e">// string | number | boolean
+</span></span></span></code></pre></div><p>看到这里， 可以总结出一个规律：</p>
+<ul>
+<li>类型别名相当于一个函数， 而泛型就是函数形参</li>
+<li>类似于函数， 类型可以有默认值与约束条件</li>
+</ul>
+<h2 id="3-常见工具类型的实现">3 常见工具类型的实现</h2>
+<h3 id="31-属性修饰性工具">3.1 属性修饰性工具</h3>
+<ul>
+<li>Partial 将属性变为可选</li>
+<li>Required 将属性变为必选</li>
+<li>Readonly 将属性变为可读</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Partial</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">?:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Required</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">-?:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Readonly</span>&lt;<span style="color:#f92672">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">readonly</span> [<span style="color:#a6e22e">K</span> <span style="color:#66d9ef">in</span> <span style="color:#66d9ef">keyof</span> <span style="color:#a6e22e">T</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">K</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h3 id="32-结构工具类型">3.2 结构工具类型</h3>
+<ul>
+<li>Pick&lt;A, B&gt; 从属性 A 中取出 B 的部分</li>
+<li>Omit&lt;A, B&gt; 从属性 A 其中不包含 B 的部分</li>
+<li>Record&lt;A, B&gt; 声明一个 键名为 A， 值为 B 的结构</li>
+</ul>
+<p>结构工具类型其实又可以分为两类，结构声明和结构处理。
+结构声明工具类型即快速声明一个结构，比如内置类型中的<strong>Record</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Record</span>&lt;<span style="color:#f92672">K</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">any</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">P</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">K</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">StringObject</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">_Record</span>&lt;<span style="color:#f92672">string</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">string</span>&gt;;
+</span></span></code></pre></div><p><strong>Pick</strong> 从属性中取出一部分属性作为一个新的类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Pick</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">K</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">P</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">K</span>]<span style="color:#f92672">:</span> <span style="color:#a6e22e">T</span>[<span style="color:#a6e22e">P</span>];
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>Omit</strong> 从属性中删除一部分属性， 将剩余的属性作为一个新的类型
+这个实现起来比较麻烦， 想想想这个这么用， 比如说：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">School</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">name</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">age</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">address</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">OmitSchool</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Omit</span>&lt;<span style="color:#f92672">School</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#960050;background-color:#1e0010">&#34;</span><span style="color:#a6e22e">address</span><span style="color:#960050;background-color:#1e0010">&#34;</span>&gt;; <span style="color:#75715e">// {name, age}
+</span></span></span></code></pre></div><p>也就是说接受两个参数 A 和 B， 其中 B 应该是 A 的属性名， 那么就可以写出基本的格式如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Omit</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">K</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span>&gt; <span style="color:#f92672">=</span> {};
+</span></span></code></pre></div><p>其次， 起作用是从 T 中剔除 K 的属性， 也就是说从 T 中选出不包含 K 的部分， 那么就可以用 Pick 来实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Omit</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">K</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">Pick</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">不包括K的部分</span>&gt;;
+</span></span></code></pre></div><p>那么， 只剩下不包括 K 的部分应该这么定义了。这里使用<strong>Exclude 来实现</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Temp</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Exclude</span>&lt;<span style="color:#f92672">1</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">2</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">3</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">1</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">2</span>&gt;; <span style="color:#75715e">// 3
+</span></span></span></code></pre></div><p>从上述代码中可以看出， Exclude&lt;A, B&gt; 的结果就是<strong>联合类型 A</strong>中不存在于 B 中的部分。 那么就可以完哼的写出 Omit 的类型实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Omit</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">K</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">Pick</span>&lt;<span style="color:#f92672">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">Exclude</span><span style="color:#960050;background-color:#1e0010">&lt;</span><span style="color:#a6e22e">keyof</span> <span style="color:#a6e22e">T</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#a6e22e">K</span>&gt;<span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><h3 id="33-模式匹配工具类型">3.3 模式匹配工具类型</h3>
+<p>模式匹配工具常用于处理函数中：</p>
+<ul>
+<li>Parameters 提取函数的参数，返回一个元祖</li>
+<li>ReturnType 提取函数返回值类型</li>
+</ul>
+<p><strong>Parameters</strong>的用法如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">exampleFunction</span>(<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">number</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">`</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">x</span><span style="color:#e6db74">}</span><span style="color:#e6db74">_</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">y</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ExampleFuncParams</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Parameters</span>&lt;<span style="color:#f92672">typeof</span> <span style="color:#a6e22e">exampleFunction</span>&gt;; <span style="color:#75715e">// [x: number, y: string]
+</span></span></span></code></pre></div><p>在实现上， 需要用<strong>infer</strong>关键字， 用于推断， 只能用于条件表达式中。
+思考一下 Parameters 的实现， 首先是类型定义， 其必须接受一个函数：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Parameters</span>&lt;<span style="color:#f92672">T</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">Function</span>&gt;
+</span></span></code></pre></div><p>之后， 如何提取函数参数呢？ 🤔， 使用 infer 关键字来实现</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_Parameters</span>&lt;<span style="color:#f92672">T</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">Function</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">T</span> <span style="color:#66d9ef">extends</span> (...<span style="color:#a6e22e">args</span>: <span style="color:#66d9ef">infer</span> <span style="color:#a6e22e">R</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">any</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">R</span> : <span style="color:#66d9ef">never</span>;
+</span></span></code></pre></div><p>这里的 infer R 表示推断参数的类型， 与之相似的可以推断返回值的类型</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">_ReturnType</span>&lt;<span style="color:#f92672">T</span> <span style="color:#a6e22e">extends</span> <span style="color:#a6e22e">Function</span>&gt; <span style="color:#f92672">=</span> <span style="color:#a6e22e">T</span> <span style="color:#66d9ef">extends</span> (...<span style="color:#a6e22e">args</span>: <span style="color:#66d9ef">any</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">infer</span> <span style="color:#a6e22e">R</span> <span style="color:#f92672">?</span> <span style="color:#a6e22e">R</span> : <span style="color:#66d9ef">never</span>;
+</span></span></code></pre></div>
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>
