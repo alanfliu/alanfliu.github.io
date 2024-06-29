@@ -96,6 +96,7 @@
 <p>学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。</p>
 <p>老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。</p>
 <p>管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统</p>
+<p><img src="/pictures/course-stystem/roles.png" alt="角色权限及功能"></p>
 <h2 id="2-技术选型">2 技术选型</h2>
 <p>用到的技术如下所示：</p>
 <ol>
@@ -105,7 +106,6 @@
 <li>缓存： Redis</li>
 <li>部署： Docker + Docker Compose + Nginx</li>
 </ol>
-<p><img src="https://github.com/alanfliu/alanfliu.github.io/blob/master/pictures/course-stystem/roles.png" alt="角色权限及功能"></p>
 <h2 id="需求分析">需求分析</h2>
 <p>在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。</p>
 <p>首先是注册功能实现， 需要以下接口：</p>
@@ -114,7 +114,7 @@
 <li>/getCaptcha 获取验证码</li>
 </ol>
 <p>逻辑如下所示：
-<img src="https://github.com/alanfliu/alanfliu.github.io/blob/master/pictures/course-stystem/register.png" alt="注册"></p>
+<img src="/pictures/course-stystem/register.png" alt="注册"></p>
 <h2 id="详细设计">详细设计</h2>
 
     </div>
