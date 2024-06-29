@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <title>基于NestJS &#43; JWT实现登陆注册及权限控制 // Alanfliu Blog</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta charset="utf-8" />
+    <meta name="generator" content="Hugo 0.126.3">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Alanfliu" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" href="/css/main.min.5b1fcc8902588589c4767187402a3c29f8b8d7a6fdef6d9f8f77045bb0d14fee.css" />
+    
+
+    
+  
+
+
+    
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="基于NestJS &#43; JWT实现登陆注册及权限控制">
+  <meta name="twitter:description" content="1 需求背景 最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。
+首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。
+学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。
+学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。
+老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。
+管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统
+2 技术选型 用到的技术如下所示：
+后端： NestJS &#43; TypeOrm &#43; Typescript 前端： React &#43; Redux &#43; React Router &#43; Typescript &#43; TailwindCSS 数据库：Mysql 缓存： Redis 部署： Docker &#43; Docker Compose &#43; Nginx 需求分析 在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。
+首先是注册功能实现， 需要以下接口：
+/user/register 用户注册接口 /getCaptcha 获取验证码 逻辑如下所示： 详细设计 ">
+
+    <meta property="og:url" content="https://alanfliu.github.io/posts/%E5%9F%BA%E4%BA%8Enestjs&#43;jwt%E5%AE%9E%E7%8E%B0%E7%99%BB%E9%99%86%E6%B3%A8%E5%86%8C/">
+  <meta property="og:site_name" content="Alanfliu Blog">
+  <meta property="og:title" content="基于NestJS &#43; JWT实现登陆注册及权限控制">
+  <meta property="og:description" content="1 需求背景 最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。
+首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。
+学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。
+学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。
+老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。
+管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统
+2 技术选型 用到的技术如下所示：
+后端： NestJS &#43; TypeOrm &#43; Typescript 前端： React &#43; Redux &#43; React Router &#43; Typescript &#43; TailwindCSS 数据库：Mysql 缓存： Redis 部署： Docker &#43; Docker Compose &#43; Nginx 需求分析 在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。
+首先是注册功能实现， 需要以下接口：
+/user/register 用户注册接口 /getCaptcha 获取验证码 逻辑如下所示： 详细设计 ">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-06-29T20:42:33+08:00">
+    <meta property="article:modified_time" content="2024-06-29T20:42:33+08:00">
+
+
+  </head>
+  <body>
+    <header class="app-header">
+      <a href="https://alanfliu.github.io/"><img class="app-header-avatar" src="/avatar.jpg" alt="Alanfliu" /></a>
+      <span class="app-header-title">Alanfliu Blog</span>
+      <p>前端程序员，努力探索世界中~~</p>
+      <div class="app-header-social">
+        
+          <a href="https://github.com/alanfliu" target="_blank" rel="noreferrer noopener me">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-github">
+  <title>My Github</title>
+  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+</svg>
+          </a>
+        
+      </div>
+    </header>
+    <main class="app-container">
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class ="post-title">基于NestJS &#43; JWT实现登陆注册及权限控制</h1>
+      <div class="post-meta">
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
+  <title>calendar</title>
+  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+          Jun 29, 2024
+        </div>
+        <div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-clock">
+  <title>clock</title>
+  <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+          1 min read
+        </div>
+      </div>
+    </header>
+    <div class="post-content">
+      <h2 id="1-需求背景">1 需求背景</h2>
+<p>最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。</p>
+<p>首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。</p>
+<p>学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。</p>
+<p>学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。</p>
+<p>老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。</p>
+<p>管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统</p>
+<h2 id="2-技术选型">2 技术选型</h2>
+<p>用到的技术如下所示：</p>
+<ol>
+<li>后端： NestJS + TypeOrm + Typescript</li>
+<li>前端： React + Redux + React Router + Typescript + TailwindCSS</li>
+<li>数据库：Mysql</li>
+<li>缓存： Redis</li>
+<li>部署： Docker + Docker Compose + Nginx</li>
+</ol>
+<p><img src="https://github.com/alanfliu/alanfliu.github.io/blob/master/pictures/course-stystem/roles.png" alt="角色权限及功能"></p>
+<h2 id="需求分析">需求分析</h2>
+<p>在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。</p>
+<p>首先是注册功能实现， 需要以下接口：</p>
+<ol>
+<li>/user/register 用户注册接口</li>
+<li>/getCaptcha 获取验证码</li>
+</ol>
+<p>逻辑如下所示：
+<img src="https://github.com/alanfliu/alanfliu.github.io/blob/master/pictures/course-stystem/register.png" alt="注册"></p>
+<h2 id="详细设计">详细设计</h2>
+
+    </div>
+    <div class="post-footer">
+      
+    </div>
+  </article>
+
+    </main>
+  </body>
+</html>

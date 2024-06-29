@@ -6,21 +6,21 @@
     <description>Recent content in Posts on Alanfliu Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 22 Jun 2024 14:14:35 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 29 Jun 2024 20:42:33 +0800</lastBuildDate>
     <atom:link href="https://alanfliu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于NestJS &#43; JWT实现登陆注册及权限控制</title>
+      <link>https://alanfliu.github.io/posts/%E5%9F%BA%E4%BA%8Enestjs&#43;jwt%E5%AE%9E%E7%8E%B0%E7%99%BB%E9%99%86%E6%B3%A8%E5%86%8C/</link>
+      <pubDate>Sat, 29 Jun 2024 20:42:33 +0800</pubDate>
+      <guid>https://alanfliu.github.io/posts/%E5%9F%BA%E4%BA%8Enestjs&#43;jwt%E5%AE%9E%E7%8E%B0%E7%99%BB%E9%99%86%E6%B3%A8%E5%86%8C/</guid>
+      <description>1 需求背景 最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。&#xA;首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。&#xA;学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。&#xA;学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。&#xA;老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。&#xA;管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统&#xA;2 技术选型 用到的技术如下所示：&#xA;后端： NestJS + TypeOrm + Typescript 前端： React + Redux + React Router + Typescript + TailwindCSS 数据库：Mysql 缓存： Redis 部署： Docker + Docker Compose + Nginx 需求分析 在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。&#xA;首先是注册功能实现， 需要以下接口：&#xA;/user/register 用户注册接口 /getCaptcha 获取验证码 逻辑如下所示： 详细设计 </description>
+    </item>
     <item>
       <title>Typescript-类型工具与泛型</title>
       <link>https://alanfliu.github.io/posts/ts%E5%AD%A6%E4%B9%A0-%E6%B3%9B%E5%9E%8B/</link>
       <pubDate>Sat, 22 Jun 2024 14:14:35 +0800</pubDate>
       <guid>https://alanfliu.github.io/posts/ts%E5%AD%A6%E4%B9%A0-%E6%B3%9B%E5%9E%8B/</guid>
       <description>前言 最近在重新学习 Typescript, 从类型工具与泛型开始梳理起， 毕竟泛型是 TS 的灵魂之一， 而泛型是离不开类型工具的； 这篇博客从以下三点开启梳理：&#xA;类型工具 泛型 常见工具函数的模拟实现 1 类型工具 类型工具顾名思义，它就是对类型进行处理的工具。按照使用目的来划分，类型工具可以分为 类型创建 与 类型安全保护 两类。&#xA;类型工具：负责创建类型 类型安全保护：负责守卫类型 1.1 类型工具 联合类型很简单， 看下面的代码：&#xA;interface NameStruct { name: string; } interface AgeStruct { age: number; } type NameOrAge = NameStruct | AgeStruct; const p: NameOrAge = { name: &amp;#34;12&amp;#34;, age: 12, }; const p2: NameOrAge = { name: &amp;#34;12&amp;#34;, }; const p3: NameOrAge = { age: 12, }; 如何两个类型 A 和 B 组成一个联合类型 C, 那么 C 就需要符合要么是 A，要么是 B， 要么是 AB</description>
-    </item>
-    <item>
-      <title>登陆注册--使用用户名和密码实现身份认证及权限控制</title>
-      <link>https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
-      <pubDate>Thu, 06 Jun 2024 23:23:35 +0800</pubDate>
-      <guid>https://alanfliu.github.io/posts/nestjs%E4%B8%AD%E7%9A%84%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
-      <description>基本的业务逻辑如下：&#xA;用户输入用户名和密码 服务端接收到请求后， 将密码进行哈希处理 将哈希后的密码与数据库中的哈希进行对比 如果匹配成功， 生成一个 token 返回给客户端 1 搭建环境 1.1 前端环境搭建 使用 vite 创建一个 react 项目&#xA;mkdir login-test cd login-test &amp;amp;&amp;amp; mkdir user-password-login &amp;amp;&amp;amp; cd user-password-login pnpm create vite 在交互过程中选择以下选项：&#xA;Project name: clint Select a framework: React Select a variant: TypeScript 使用 tailwind css 来写样式， 需要集成 Tailwind css&#xA;cd client pnpm add -D tailwindcss postcss autoprefixer ```bash # 这个命令会在你的项目根目录下创建 tailwind.config.js 和 postcss.config.js 文件。 ```bash npx tailwindcss init -p 修改tailwind.</description>
     </item>
   </channel>
 </rss>
