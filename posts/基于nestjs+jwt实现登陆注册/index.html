@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-us">
   <head>
-    <title>基于NestJS &#43; JWT实现登陆注册及权限控制 // Alanfliu Blog</title>
+    <title>[TodoApp] 第一章 基础配置与TodoList功能模块实现 // Alanfliu Blog</title>
     <link rel="shortcut icon" href="/favicon.ico" />
     <meta charset="utf-8" />
     <meta name="generator" content="Hugo 0.126.3">
@@ -17,31 +17,21 @@
 
     
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="基于NestJS &#43; JWT实现登陆注册及权限控制">
-  <meta name="twitter:description" content="1 需求背景 最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。
-首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。
-学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。
-学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。
-老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。
-管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统
-2 技术选型 用到的技术如下所示：
-后端： NestJS &#43; TypeOrm &#43; Typescript 前端： React &#43; Redux &#43; React Router &#43; Typescript &#43; TailwindCSS 数据库：Mysql 缓存： Redis 部署： Docker &#43; Docker Compose &#43; Nginx 需求分析 在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。
-首先是注册功能实现， 需要以下接口：
-/user/register 用户注册接口 /getCaptcha 获取验证码 逻辑如下所示： 详细设计 ">
+  <meta name="twitter:title" content="[TodoApp] 第一章 基础配置与TodoList功能模块实现">
+  <meta name="twitter:description" content="1 需求背景 最近在学习 NestJS，想基于 NestJS 入门后端开发。在学习一段知识后想做个项目练练手，对于前端程序员来说，最熟悉的练手项目当然是 TodoList。 TodoList 无非就是对 Todo 进行增删改查， 非常适合用来练手
+2 基础配置 2.1 初始化项目 首先使用 nest cli 新建一个项目：
+nest new todolist-app -p pnpm 在新建的项目中， 修改 .prettier 文件，如下（我比较喜欢这个配置, 因此做了修改）：
+{ &#34;arrowParens&#34;: &#34;always&#34;, &#34;bracketSameLine&#34;: true, &#34;bracketSpacing&#34;: true, &#34;embeddedLanguageFormatting&#34;: &#34;auto&#34;, &#34;htmlWhitespaceSensitivity&#34;: &#34;css&#34;, &#34;insertPragma&#34;: false, &#34;jsxSingleQuote&#34;: false, &#34;proseWrap&#34;: &#34;never&#34;, &#34;quoteProps&#34;: &#34;as-needed&#34;, &#34;requirePragma&#34;: false, &#34;printWidth&#34;: 120, &#34;semi&#34;: true, &#34;singleQuote&#34;: true, &#34;tabWidth&#34;: 4, &#34;trailingComma&#34;: &#34;all&#34;, &#34;useTabs&#34;: false, &#34;vueIndentScriptAndStyle&#34;: false, &#34;singleAttributePerLine&#34;: false } 之后启动项目：
+pnpm run start:dev 在浏览器中， 输入 http://localhost:3000,可以看到以下信息， 说明项目初始化创建成功">
 
     <meta property="og:url" content="https://alanfliu.github.io/posts/%E5%9F%BA%E4%BA%8Enestjs&#43;jwt%E5%AE%9E%E7%8E%B0%E7%99%BB%E9%99%86%E6%B3%A8%E5%86%8C/">
   <meta property="og:site_name" content="Alanfliu Blog">
-  <meta property="og:title" content="基于NestJS &#43; JWT实现登陆注册及权限控制">
-  <meta property="og:description" content="1 需求背景 最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。
-首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。
-学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。
-学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。
-老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。
-管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统
-2 技术选型 用到的技术如下所示：
-后端： NestJS &#43; TypeOrm &#43; Typescript 前端： React &#43; Redux &#43; React Router &#43; Typescript &#43; TailwindCSS 数据库：Mysql 缓存： Redis 部署： Docker &#43; Docker Compose &#43; Nginx 需求分析 在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。
-首先是注册功能实现， 需要以下接口：
-/user/register 用户注册接口 /getCaptcha 获取验证码 逻辑如下所示： 详细设计 ">
+  <meta property="og:title" content="[TodoApp] 第一章 基础配置与TodoList功能模块实现">
+  <meta property="og:description" content="1 需求背景 最近在学习 NestJS，想基于 NestJS 入门后端开发。在学习一段知识后想做个项目练练手，对于前端程序员来说，最熟悉的练手项目当然是 TodoList。 TodoList 无非就是对 Todo 进行增删改查， 非常适合用来练手
+2 基础配置 2.1 初始化项目 首先使用 nest cli 新建一个项目：
+nest new todolist-app -p pnpm 在新建的项目中， 修改 .prettier 文件，如下（我比较喜欢这个配置, 因此做了修改）：
+{ &#34;arrowParens&#34;: &#34;always&#34;, &#34;bracketSameLine&#34;: true, &#34;bracketSpacing&#34;: true, &#34;embeddedLanguageFormatting&#34;: &#34;auto&#34;, &#34;htmlWhitespaceSensitivity&#34;: &#34;css&#34;, &#34;insertPragma&#34;: false, &#34;jsxSingleQuote&#34;: false, &#34;proseWrap&#34;: &#34;never&#34;, &#34;quoteProps&#34;: &#34;as-needed&#34;, &#34;requirePragma&#34;: false, &#34;printWidth&#34;: 120, &#34;semi&#34;: true, &#34;singleQuote&#34;: true, &#34;tabWidth&#34;: 4, &#34;trailingComma&#34;: &#34;all&#34;, &#34;useTabs&#34;: false, &#34;vueIndentScriptAndStyle&#34;: false, &#34;singleAttributePerLine&#34;: false } 之后启动项目：
+pnpm run start:dev 在浏览器中， 输入 http://localhost:3000,可以看到以下信息， 说明项目初始化创建成功">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
@@ -70,7 +60,7 @@
       
   <article class="post">
     <header class="post-header">
-      <h1 class ="post-title">基于NestJS &#43; JWT实现登陆注册及权限控制</h1>
+      <h1 class ="post-title">[TodoApp] 第一章 基础配置与TodoList功能模块实现</h1>
       <div class="post-meta">
         <div>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-calendar">
@@ -84,38 +74,201 @@
   <title>clock</title>
   <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
 </svg>
-          1 min read
+          3 min read
         </div>
       </div>
     </header>
     <div class="post-content">
       <h2 id="1-需求背景">1 需求背景</h2>
-<p>最近在学习 NestJS 和后端相关知识， 想做个简单的管理系统来练练手， 想来想去就从学生选课系统入手。</p>
-<p>首先， 用户分为三种用户： 学生、老师和管理员， 各自有不同的功能。</p>
-<p>学生和老师可以注册，注册的时候会发邮件来验证身份， 注册后就可以登陆系统。管理员是内置的，不需要注册。</p>
-<p>学生可以查看课程成绩， 报名课程并查看课程进度， 最后通过考试， 获得课程证书。</p>
-<p>老师可以发布课程， 给对应课程名下的学生的成绩进行打分， 并公布学生成绩。</p>
-<p>管理员需要审核老师发布的课程， 审核通过的课程才能被学生看到。管理元也可以冻结角色为学生和老师的账户， 被冻结的账户不能登陆系统</p>
-<p><img src="/pictures/course-stystem/roles.png" alt="角色权限及功能"></p>
-<h2 id="2-技术选型">2 技术选型</h2>
-<p>用到的技术如下所示：</p>
-<ol>
-<li>后端： NestJS + TypeOrm + Typescript</li>
-<li>前端： React + Redux + React Router + Typescript + TailwindCSS</li>
-<li>数据库：Mysql</li>
-<li>缓存： Redis</li>
-<li>部署： Docker + Docker Compose + Nginx</li>
-</ol>
-<h2 id="需求分析">需求分析</h2>
-<p>在学生选课系统中， 最基础的就是用户管理模块， 也就是登陆注册。</p>
-<p>首先是注册功能实现， 需要以下接口：</p>
-<ol>
-<li>/user/register 用户注册接口</li>
-<li>/getCaptcha 获取验证码</li>
-</ol>
-<p>逻辑如下所示：
-<img src="/pictures/course-stystem/register.png" alt="注册"></p>
-<h2 id="详细设计">详细设计</h2>
+<p>最近在学习 NestJS，想基于 NestJS 入门后端开发。在学习一段知识后想做个项目练练手，对于前端程序员来说，最熟悉的练手项目当然是 TodoList。<!-- raw HTML omitted -->
+TodoList 无非就是对 Todo 进行增删改查， 非常适合用来练手</p>
+<h2 id="2-基础配置">2 基础配置</h2>
+<h3 id="21-初始化项目">2.1 初始化项目</h3>
+<p>首先使用 nest cli 新建一个项目：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest new todolist-app -p pnpm
+</span></span></code></pre></div><p>在新建的项目中， 修改 .prettier 文件，如下（我比较喜欢这个配置, 因此做了修改）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;arrowParens&#34;</span>: <span style="color:#e6db74">&#34;always&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;bracketSameLine&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;bracketSpacing&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;embeddedLanguageFormatting&#34;</span>: <span style="color:#e6db74">&#34;auto&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;htmlWhitespaceSensitivity&#34;</span>: <span style="color:#e6db74">&#34;css&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;insertPragma&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;jsxSingleQuote&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;proseWrap&#34;</span>: <span style="color:#e6db74">&#34;never&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;quoteProps&#34;</span>: <span style="color:#e6db74">&#34;as-needed&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;requirePragma&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;printWidth&#34;</span>: <span style="color:#ae81ff">120</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;semi&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;singleQuote&#34;</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;tabWidth&#34;</span>: <span style="color:#ae81ff">4</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;trailingComma&#34;</span>: <span style="color:#e6db74">&#34;all&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;useTabs&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;vueIndentScriptAndStyle&#34;</span>: <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;singleAttributePerLine&#34;</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>之后启动项目：</p>
+<pre tabindex="0"><code>pnpm run start:dev
+</code></pre><p>在浏览器中， 输入 http://localhost:3000,可以看到以下信息， 说明项目初始化创建成功</p>
+<pre tabindex="0"><code>hello world
+</code></pre><h3 id="21-格式化响应信息">2.1 格式化响应信息</h3>
+<p>通过 cli 初始化的项目的返回信息非常单调， 不适合前端开发， 因此需要对响应信息进行修改， 形成所有结构统一格式的响应信息， 如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;code&#34;</span>: <span style="color:#ae81ff">200</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;success&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;data&#34;</span>: <span style="color:#960050;background-color:#1e0010">data</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>对于响应异常的信息， 也要做格式化处理：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;code&#34;</span>: <span style="color:#960050;background-color:#1e0010">http.statusCode</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;fail&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#960050;background-color:#1e0010">data:</span> <span style="color:#960050;background-color:#1e0010">http.error</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>在 NestJS 中， 对于每个请求的处理顺序如下图所示：</strong>
+<img src="/pictures/todo-app/nest-rqeust.png" alt="Nest请求执行顺序">
+从图中可以看出，通用响应数据需要通过拦截器（interceptor）和异常过滤器来实现（exception filter。<strong>图上将路由处理分为很多步骤来进行分别处理， 每个步骤都处理对应的逻辑， 这种思想称之为 AOP 面向切面编程</strong></p>
+<blockquote>
+<p>Controller 层主要负责处理来自客户端的请求和发送响应。控制器会使用 Service 层提供的方法来执行业务逻辑，并将结果返回给客户端。在 Controller 层，将类中的每个处理路由的方法称之为 handler,例如，在 app.controller.ts 中， 有一个方法，getHello 方法， 该方法就是一个 handler， 用于处理 localhost:3000 路由下的 Get 请求</p>
+</blockquote>
+<blockquote>
+<p>在 NestJS 中，拦截器（Interceptor） 是一个用 @Injectable() 装饰器注释的类，并实现 NestInterceptor 接口。拦截器通常用于在函数执行之前或之后执行一些操作。拦截器可以用于多种用途，例如日志记录、异常处理、数据转换等。
+·
+Exception Filter 是在 Nest 应用抛异常的时候，捕获它并返回一个对应的响应。</p>
+</blockquote>
+<p>首先新建一个 common 文件夹， 用于存放通用逻辑
+在 common 文件夹下新鲜 filters 和 interceptors 两个文件夹， 用于存放通过过滤器和拦截器， 目录结构如下：</p>
+<pre tabindex="0"><code>.
+├── app.controller.ts
+├── app.module.ts
+├── common
+│   ├── filters
+│   │   └── error-response-transformer.filter.ts
+│   └── interceptors
+│       └── response-transformer.interceptor.ts
+└── main.ts
+</code></pre><hr>
+<h4 id="211-响应成功数据">2.1.1 响应成功数据</h4>
+<p>通过 nest cli 新建一个拦截器：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest g itc response-transformer --no-spec ./common/interceptors
+</span></span></code></pre></div><p>实现代码如下所示：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @file 响应数据转化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">CallHandler</span>, <span style="color:#a6e22e">ExecutionContext</span>, <span style="color:#a6e22e">Injectable</span>, <span style="color:#a6e22e">NestInterceptor</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">map</span>, <span style="color:#a6e22e">Observable</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;rxjs&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Injectable</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ResponseTransformerInterceptor</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">NestInterceptor</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">intercept</span>(<span style="color:#a6e22e">context</span>: <span style="color:#66d9ef">ExecutionContext</span>, <span style="color:#a6e22e">next</span>: <span style="color:#66d9ef">CallHandler</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Observable</span>&lt;<span style="color:#f92672">any</span>&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">next</span>.<span style="color:#a6e22e">handle</span>().<span style="color:#a6e22e">pipe</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">data</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">200</span>, <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;success&#34;</span>, <span style="color:#a6e22e">data</span> };
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在 main.ts 中启用这个拦截器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">NestFactory</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/core&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppModule</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./app.module&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ResponseTransformerInterceptor</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./common/interceptors/response-transformer.interceptor&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">async</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">bootstrap() {</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">app</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">NestFactory</span>.<span style="color:#a6e22e">create</span>(<span style="color:#a6e22e">AppModule</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">useGlobalInterceptors</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">ResponseTransformerInterceptor</span>());
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">listen</span>(<span style="color:#ae81ff">3000</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bootstrap</span>();
+</span></span></code></pre></div><p>此时请求 localhost:3000， 就可以看到如下响应信息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;code&#34;</span>: <span style="color:#ae81ff">200</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;success&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;data&#34;</span>: <span style="color:#e6db74">&#34;hello world&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><hr>
+<h4 id="211-响应异常数据">2.1.1 响应异常数据</h4>
+<p>通过 nest cli 生成一个过滤器：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nest g filter error-response-transformer --no-spec <span style="color:#e6db74">&#39;./common/filters&#39;</span>
+</span></span></code></pre></div><p>实现代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @file 异常响应数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ArgumentsHost</span>, <span style="color:#a6e22e">Catch</span>, <span style="color:#a6e22e">ExceptionFilter</span>, <span style="color:#a6e22e">HttpException</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Response</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;express&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Catch</span>(<span style="color:#a6e22e">HttpException</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ErrorResponseTransformerFilter</span> <span style="color:#66d9ef">implements</span> <span style="color:#a6e22e">ExceptionFilter</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">catch</span>(<span style="color:#a6e22e">exception</span>: <span style="color:#66d9ef">HttpException</span>, <span style="color:#a6e22e">host</span>: <span style="color:#66d9ef">ArgumentsHost</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">response</span>: <span style="color:#66d9ef">Response</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">host</span>.<span style="color:#a6e22e">switchToHttp</span>().<span style="color:#a6e22e">getResponse</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">response</span>
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">json</span>({
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">code</span>: <span style="color:#66d9ef">exception.getStatus</span>(),
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">message</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;fail&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">data</span>: <span style="color:#66d9ef">exception.message</span>,
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">end</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>在 app.controller.ts 中新建一个请求，用于测试</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>(<span style="color:#e6db74">&#39;err&#39;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">errTest() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HttpException</span>(<span style="color:#e6db74">&#39;错误测试&#39;</span>, <span style="color:#a6e22e">HttpStatus</span>.<span style="color:#a6e22e">BAD_REQUEST</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>请求 localhost:3000/err 可以看到以下响应：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;code&#34;</span>: <span style="color:#ae81ff">400</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;fail&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&#34;data&#34;</span>: <span style="color:#e6db74">&#34;错误测试&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="22-配置处理">2.2 配置处理</h3>
+<p>在项目开发中， 会用到各种各样的第三方工具， 比如数据库 Mysql, 缓存 Redis，邮箱工具 nodemailer 等等， 这些工具都需要进行配置， 如果配置信息直接写在代码里， 十分的不方便以及低效， 因此本项目通过.env 文件进行管理。</p>
+<p>首先下载 @nestjs/config 用来读取配置信息</p>
+<pre tabindex="0"><code>pnpm add @nestjs/config
+</code></pre><p>之后在 src 文件夹下新建一个.env 文件。</p>
+<blockquote>
+<p>由于后续部署项目时，会直接配置 dist 文件，而在亘路径下的 env 文件需要复制到 dist 文件中， 十分不方便。而在 src 下的文件，是会自动打包到 dist 文件夹中的
+env 文件内容如下：</p>
+</blockquote>
+<pre tabindex="0"><code># 测试
+test=hello
+</code></pre><p>在 app.module.ts 做如下配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Global</span>, <span style="color:#a6e22e">Module</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">AppController</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;./app.controller&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ConfigModule</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/config&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Global</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Module</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">imports</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">ConfigModule</span>.<span style="color:#a6e22e">forRoot</span>({ <span style="color:#a6e22e">envFilePath</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;src/.env&#34;</span> })],
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">controllers</span><span style="color:#f92672">:</span> [<span style="color:#a6e22e">AppController</span>],
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">providers</span><span style="color:#f92672">:</span> [],
+</span></span><span style="display:flex;"><span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppModule</span> {}
+</span></span></code></pre></div><p>在 app.controller.ts 中进行测试：</p>
+<blockquote>
+<p>configService 可以使用属性注入或者构造器注入， 本质都是一样的。这里使用构造器注入</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">Controller</span>, <span style="color:#a6e22e">Get</span>, <span style="color:#a6e22e">HttpException</span>, <span style="color:#a6e22e">HttpStatus</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/common&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">import</span> { <span style="color:#a6e22e">ConfigService</span> } <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#34;@nestjs/config&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">@Controller</span>()
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppController</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">constructor</span>(<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#a6e22e">configService</span>: <span style="color:#66d9ef">ConfigService</span>) {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getHello</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">configService</span>.<span style="color:#66d9ef">get</span>(<span style="color:#e6db74">&#34;test&#34;</span>));
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;hello world&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">@Get</span>(<span style="color:#e6db74">&#34;err&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">errTest() {</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">HttpException</span>(<span style="color:#e6db74">&#34;错误测试&#34;</span>, <span style="color:#a6e22e">HttpStatus</span>.<span style="color:#a6e22e">BAD_REQUEST</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>至此，基础的配置已经完成</p>
+<h2 id="3-todolist-功能模块实现">3 TodoList 功能模块实现</h2>
 
     </div>
     <div class="post-footer">
