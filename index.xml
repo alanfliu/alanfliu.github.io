@@ -6,8 +6,15 @@
     <description>Recent content on Alanfliu Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 29 Jun 2024 20:42:33 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 07 Jul 2024 21:54:25 +0800</lastBuildDate>
     <atom:link href="https://alanfliu.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>学习之路</title>
+      <link>https://alanfliu.github.io/posts/%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%B7%AF/</link>
+      <pubDate>Sun, 07 Jul 2024 21:54:25 +0800</pubDate>
+      <guid>https://alanfliu.github.io/posts/%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%B7%AF/</guid>
+      <description>在闲暇时间一直在学习一些东西， 东一榔头西一锤子的， 比如看到了 NestJS 的文章就对 NestJS 感兴趣， 然后花时间去学习了 NestJS 的知识， 但是在工作中也没有用上，久而久之慢慢的就忘了！&#xA;以上只是举了一个例子， 其他还有很多， 比如 Rust、GO 等等， 都不是很熟练， 能用，但是在面试时也不太敢说自己会！&#xA;痛定思痛， 我决定整理下我的技术栈， 将技术从广度与深度两个维度来划分， 看看哪些技术是我必须掌握的， 哪些技术是我掌握并可以作为亮点的， 哪些技术是玩票性质， 当作爱好来学习的。&#xA;最终形成的技术图如下所示： 首先是看家本领，主要聚焦于业务开发领域， 比如前端基础： HTML、CSS、JS 和 TS， 以及计算机基础，比如网络中的 HTTP、TCP 等，还有算法和数据结构， 这些都在业务开发中非常常见，属于是吃饭的家伙， 必须滚瓜烂熟达到倒背如流的境界。&#xA;其次是支持业务开发的底层知识，比如打包工具：webpack 和 Vite，以及跨端开发， 实际上在工作中一直从事大前端开发工作，经常开发 PC/H5/HN 等不同端的页面， 但是对于其底层原理也不是很熟悉， 另外对于常见的跨端开发比如 React Native 和 Flutter 都不是很熟悉（工作中用的跨端开发是公司封装的 San + Talos），这部分知识我的计划是学习并了解其原理，尝试在工作中引入， 当作项目亮点来规划&#xA;最后一部分是深入服务端开发， 立志成为一个全栈开发人才，通过学习 NestJS, 来熟悉后端开发的世界， 熟悉 Mysql 、Redis、Nginx、Docker 等等知识， 从前端开发，慢慢深入到软件开发的整个生命周期， 成为一名真正意义上的软件开发工程师。&#xA;最后是博客更新计划， 规划是每周四篇博客， 分为三部分：&#xA;基础部分：会定期整理基础知识， 聚焦于上图中的绿色部分， 比如刷题心得， 工作中用到的算法场景， 网络知识以及一些手写题等等， 计划是每周更新两篇这部分内容。 进阶部分： 即上图中的橙色部分，从入门到进阶，先从 webpack 入手， 整理出自己的学习笔记， 从使用到了解其原理，计划每周更新 2 篇博客。 服务端开发： 不定时更新， 主要是在工作中使用场景极其有限， 会保持学习 </description>
+    </item>
     <item>
       <title>[TodoApp] 第一章 基础配置·</title>
       <link>https://alanfliu.github.io/posts/%E5%9F%BA%E4%BA%8Enestjs&#43;jwt%E5%AE%9E%E7%8E%B0%E7%99%BB%E9%99%86%E6%B3%A8%E5%86%8C/</link>
