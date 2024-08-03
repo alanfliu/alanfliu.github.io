@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Alanfliu Blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 07 Jul 2024 21:54:25 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 03 Aug 2024 21:54:25 +0800</lastBuildDate>
     <atom:link href="https://alanfliu.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ReactNative 01 环境搭建与TodoList</title>
+      <link>https://alanfliu.github.io/posts/reactnative01/</link>
+      <pubDate>Sat, 03 Aug 2024 21:54:25 +0800</pubDate>
+      <guid>https://alanfliu.github.io/posts/reactnative01/</guid>
+      <description>0 前言 最近在开放一个个人 APP, 思来想去准备使用 React Native 来开发， 这里也记录一下学习笔记， 分别从下面几个思路来学习：&#xA;环境搭建与 TodoList 路由系统与 Expo Route 网络系统与本地存储 动画与手势处理 打包、部署及发布 1 环境搭建 使用 Expo 搭建 RN 开发环境， 便于开发学习&#xA;pnpm create expo-app 需要在本地安装 Xcode 和 ios 模拟器&#xA;2 创建项目 之前在学习 React 的时候， 做的一个练手项目就是 TodoList, 这里也实现一个 TodoList 的 RN 项目&#xA;首先创建项目&#xA;pnpm create expo-app todolist --templae blank &amp;ndash;template blank 是创建一个空模版的项目， expo 官网提供了很多的项目模版， 这里使用空的模版来充当练手项目&#xA;创建成功之后的项目目录如下所示：&#xA;- assets // 资源目录 - App.js // 入口文件 - app.json // app配置文件 - package.</description>
+    </item>
     <item>
       <title>学习之路</title>
       <link>https://alanfliu.github.io/posts/%E5%AD%A6%E4%B9%A0%E4%B9%8B%E8%B7%AF/</link>
